@@ -12,14 +12,14 @@
     ],
     "autoload": {
         "psr-4": {
-            "Vundi\\Na-Emoji\\": "src",
-            "Vundi\\Na-Emoji\\Model\\": "src/model",
-            "Vundi\\Na-Emoji\\Controller\\": "src/controller"
+            "Vundi\\NaEmoji\\": "src",
+            "Vundi\\NaEmoji\\Model\\": "src/model",
+            "Vundi\\NaEmoji\\Controller\\": "src/controller"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Vundi\\Na-Emoji\\Test\\": "tests"
+            "Vundi\\NaEmoji\\Test\\": "tests"
         }
     },
     "require": {
