@@ -36,7 +36,7 @@ $app->get('/emoji/{id}', function ($request, $response, $args) {
 });
 
 // Create a new Emoji.
-$app->post('/emoji', function ($request, $response, $args) {
+$app->post('/emoji', function ($request, $response) {
     $data = $request->getParsedBody();
 
     if (isset($data['name']) && isset($data['char']) && isset($data['category']) && isset($data['keywords'])) {
@@ -52,6 +52,70 @@ $app->post('/emoji', function ($request, $response, $args) {
             'success' => 'Not successful',
             'message' => 'Emoji was not created. Make  sure you pass all the fields',
         ];
+    }
+
+    $response = $response->withHeader('Content-type', 'application/json');
+    $response->write(json_encode($message));
+
+    return $response;
+});
+
+// Update an Emoji.
+$app->put('/emoji/{id}', function ($request, $response, $args) {
+    $data = $request->getParsedBody();
+    $id = (int)$args['id'];
+
+    if (isset($data['name']) && isset($data['char']) && isset($data['category']) && isset($data['keywords'])) {
+        $emoji = EmojiController::updateEmoji($id, $data);
+        if ($emoji['success']) {
+            $response = $response->withStatus(201);
+            $message = [
+                'success' => true,
+                'message' => 'Emoji successfully updated',
+            ];
+        } else {
+            $response = $response->withStatus(201);
+            $message = [
+                'message' => $emoji['message']
+            ];
+        }
+    } else {
+        $response = $response->withStatus(400);
+        $message = [
+            'success' => 'Not successful',
+            'message' => 'Emoji was not updated. Make  sure you pass all the fields',
+        ];
+    }
+
+    $response = $response->withHeader('Content-type', 'application/json');
+    $response->write(json_encode($message));
+
+    return $response;
+});
+
+
+// Partially update an emoji with ID.
+$app->patch('/emoji/{id}', function ($request, $response, $args) {
+    $data = $request->getParsedBody();
+    $id = (int)$args['id'];
+
+    $emoji = Emoji::find($id);
+    foreach ($request->getParsedBody() as $key => $value) {
+        $emoji->{$key} = $value;
+    }
+    $patch = $emoji->update();
+    if ($patch) {
+        $message = [
+            'success' => true,
+            'message' => 'Emoji updated partially',
+        ];
+        $response = $response->withStatus(201);
+    } else {
+        $message = [
+            'success' => false,
+            'message' => 'Emoji not partially updated',
+        ];
+        $response = $response->withStatus(304);
     }
 
     $response = $response->withHeader('Content-type', 'application/json');
