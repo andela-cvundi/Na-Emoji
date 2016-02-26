@@ -24,7 +24,11 @@ class EmojiController
 
             return $emoji->db_fields;
         } catch (NonExistentID $e) {
-
+            return $message = [
+                'emoji'   => 0,
+                'message' => $e->getMessage(),
+            ];
+        } catch (IDShouldBeNumber $e) {
             return $message = [
                 'emoji'   => 0,
                 'message' => $e->getMessage(),

@@ -99,27 +99,48 @@ $app->patch('/emoji/{id}', function ($request, $response, $args) {
     $data = $request->getParsedBody();
     $id = (int)$args['id'];
 
-    $emoji = Emoji::find($id);
-    foreach ($request->getParsedBody() as $key => $value) {
-        $emoji->{$key} = $value;
-    }
-    $patch = $emoji->update();
-    if ($patch) {
-        $message = [
-            'success' => true,
-            'message' => 'Emoji updated partially',
-        ];
-        $response = $response->withStatus(201);
-    } else {
+    try {
+        $emoji = Emoji::find($id);
+        foreach ($request->getParsedBody() as $key => $value) {
+            $emoji->{$key} = $value;
+        }
+        $patch = $emoji->update();
+
+        if ($patch) {
+            $message = [
+                'success' => true,
+                'message' => 'Emoji updated partially',
+            ];
+            $response = $response->withStatus(201);
+        } else {
+            $message = [
+                'success' => false,
+                'message' => 'Emoji not partially updated',
+            ];
+
+            $response = $response->withStatus(304);
+        }
+
+        $response = $response->withHeader('Content-type', 'application/json');
+        $response->write(json_encode($message));
+
+        return $response;
+    } catch (NonExistentID $e) {
         $message = [
             'success' => false,
-            'message' => 'Emoji not partially updated',
+            'message' => $e->getMessage()
         ];
-        $response = $response->withStatus(304);
+
+        return json_encode($message);
     }
+});
 
-    $response = $response->withHeader('Content-type', 'application/json');
-    $response->write(json_encode($message));
-
-    return $response;
+$app->delete('/person/{id}', function ($request, $response, $args) {
+    $app->response()->header("Content-Type", "application/json");
+    $id = (int)$id;
+    Emoji::remove($id);
+    echo json_encode(array(
+        "status" => true,
+        "message" => "Person deleted successfully"
+    ));
 });
