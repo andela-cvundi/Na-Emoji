@@ -2,7 +2,7 @@
 
 use Vundi\NaEmoji\Controllers\EmojiController;
 use Vundi\NaEmoji\Models\Emoji;
-use Vundi\NaEmoji\Model\User;
+use Vundi\NaEmoji\Models\User;
 use Vundi\Potato\Exceptions\NonExistentID;
 
 date_default_timezone_set('Africa/Nairobi');
@@ -162,7 +162,7 @@ $app->post('/auth/register', function ($request, $response) {
     $username = $data['username'];
     $password = $data['password'];
     $user = User::findWhere(['username' => $username]);
-    if (array_key_exists('id', $user)) {
+    if (array_key_exists('id', $user[0])) {
         $message = [
                 'success' => false,
                 'message' => 'Username already taken, try a different username',
@@ -180,7 +180,7 @@ $app->post('/auth/register', function ($request, $response) {
                 'message' => 'Account successfully created',
             ];
             $response = $response->withStatus(201);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $message = [
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -188,4 +188,8 @@ $app->post('/auth/register', function ($request, $response) {
             $response = $response->withStatus(500);
         }
     }
-}
+    $response = $response->withHeader('Content-type', 'application/json');
+    $json = json_encode($message);
+    $response->write($json);
+    return $response;
+});
