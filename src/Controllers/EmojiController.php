@@ -76,22 +76,4 @@ class EmojiController
             ];
         }
     }
-
-    public static function delete($id)
-    {
-        try {
-            $id = (int)$id;
-            if (is_Object(Emoji::find($id))) {
-                Emoji::remove($id);
-                echo json_encode(array(
-                    "status" => true,
-                    "message" => "Person deleted successfully"
-                ));
-            } else {
-                throw new Exception("Person with that ID does not exist");
-            }
-        } catch (Exception $e) {
-            echo $e->getMessage();
-        }
-    }
 }

@@ -135,12 +135,22 @@ $app->patch('/emoji/{id}', function ($request, $response, $args) {
     }
 });
 
-$app->delete('/person/{id}', function ($request, $response, $args) {
-    $app->response()->header("Content-Type", "application/json");
-    $id = (int)$id;
-    Emoji::remove($id);
-    echo json_encode(array(
-        "status" => true,
-        "message" => "Person deleted successfully"
-    ));
+$app->delete('/emoji/{id}', function ($request, $response, $args) {
+
+    try {
+        $id = (int)$args['id'];
+        Emoji::remove($id);
+        $response = $response->withStatus(200);
+        $message = [
+            'success' => true,
+            "message" => "Emoji deleted succesfully."
+        ];
+    } catch (NonExistentID $e) {
+        $message = [
+            'message' => $e->getMessage()
+        ];
+    }
+
+    $response = $response->withHeader('Content-type', 'application/json');
+    return $response->write(json_encode($message));
 });
