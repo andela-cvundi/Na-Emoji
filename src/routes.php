@@ -154,3 +154,38 @@ $app->delete('/emoji/{id}', function ($request, $response, $args) {
     $response = $response->withHeader('Content-type', 'application/json');
     return $response->write(json_encode($message));
 });
+
+
+// Register a new user
+$app->post('/auth/register', function ($request, $response) {
+    $data = $request->getParsedBody();
+    $username = $data['username'];
+    $password = $data['password'];
+    $user = User::findWhere(['username' => $username]);
+    if (array_key_exists('id', $user)) {
+        $message = [
+                'success' => false,
+                'message' => 'Username already taken, try a different username',
+            ];
+        $response = $response->withStatus(400);
+    } else {
+        $user = new User();
+        $user->username = $username;
+        $user->password = sha1($password);
+
+        try {
+            $user->save();
+            $message = [
+                'success' => true,
+                'message' => 'Account successfully created',
+            ];
+            $response = $response->withStatus(201);
+        } catch (Exception $e) {
+            $message = [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+            $response = $response->withStatus(500);
+        }
+    }
+}
