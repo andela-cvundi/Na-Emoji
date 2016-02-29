@@ -193,3 +193,48 @@ $app->post('/auth/register', function ($request, $response) {
     $response->write($json);
     return $response;
 });
+
+$app->post('/auth/login', function ($request, $response) {
+    $data = $request->getParsedBody();
+    $username = $data['username'];
+    $password = $data['password'];
+    $attReturn = [];
+    $loginuser = User::findWhere(['username' => $username]);
+
+    if (array_key_exists('id', $loginuser[0])) {
+        if (sha1($password) == $loginuser[0]['password']) {
+            $token = bin2hex(openssl_random_pseudo_bytes(16));
+
+            $tokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
+            try {
+                $user = User::find((int)$loginuser[0]['id']);
+
+                $user->token = $token;
+                $user->token_expire = $tokenExpiration;
+                $user->update();
+
+                $response = $response->withStatus(200);
+                $attReturn = [
+                    'user'  => $username,
+                    'token' => $token,
+                ];
+            } catch (Exception $e) {
+                echo $e->getMessage();
+            }
+        } else {
+            $response = $response->withStatus(401);
+            $attReturn = [
+                'message' => 'Not authenticated. Please make sure you have registered',
+            ];
+        }
+    } else {
+        $response = $response->withStatus(401);
+        $attReturn = [
+            'message' => 'Not authenticated. Please make sure you have registered',
+        ];
+    }
+    $response = $response->withHeader('Content-type', 'application/json');
+    $json = json_encode($attReturn);
+    $response->write($json);
+    return $response;
+});
