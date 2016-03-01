@@ -7,12 +7,54 @@ use Vundi\Potato\Exceptions\NonExistentID;
 
 date_default_timezone_set('Africa/Nairobi');
 
+
+
+
+/*
+ * Authorization Middleware
+ * Authenticates the requests by checking the user's token
+ */
+$authMiddleWare = function ($request, $response, $next) {
+    $headers = $request->getHeaders();
+
+    if (isset($headers['HTTP_TOKEN'][0])) {
+        $token = $headers['HTTP_TOKEN'][0];
+        $date = new DateTime();
+        $date = $date->format('Y-m-d H:i:s');
+        $user = User::findWhere(['token' => $token]);
+
+        if ($user[0]['token_expire'] > $date) {
+            $loggedin = $user[0];
+        }
+
+        if (array_key_exists('username', $loggedin)) {
+            $request = $request->withAttribute('username', $loggedin['username']);
+            $response = $next($request, $response);
+        } else {
+            $response = $response->withStatus(401);
+            $message = [
+                'message' => 'Your token is either expired or invalid. Please login to get the correct token',
+            ];
+            $json = json_encode($message);
+            $response->write($json);
+        }
+    } else {
+        $response = $response->withStatus(401);
+        $message = [
+            'message' => 'Please provide an authentication token',
+        ];
+        $json = json_encode($message);
+        $response->write($json);
+    }
+    return $response;
+};
+
+
 //Get landing page
 $app->get('/', function ($request, $response) {
     // Render index view
     return $response->write('Hello world');
 });
-
 //Get all emojis
 $app->get('/emojis', function ($request, $response) {
     $emojis = Emojicontroller::All();
@@ -40,6 +82,7 @@ $app->post('/emoji', function ($request, $response) {
     $data = $request->getParsedBody();
 
     if (isset($data['name']) && isset($data['char']) && isset($data['category']) && isset($data['keywords'])) {
+        $data['username'] = $request->getAttribute('username');
         $emoji = EmojiController::newEmoji($data);
         $response = $response->withStatus(201);
         $message = [
@@ -58,7 +101,7 @@ $app->post('/emoji', function ($request, $response) {
     $response->write(json_encode($message));
 
     return $response;
-});
+})->add($authMiddleWare);
 
 // Update an Emoji.
 $app->put('/emoji/{id}', function ($request, $response, $args) {
@@ -162,7 +205,7 @@ $app->post('/auth/register', function ($request, $response) {
     $username = $data['username'];
     $password = $data['password'];
     $user = User::findWhere(['username' => $username]);
-    if (array_key_exists('id', $user[0])) {
+    if (isset($user[0]['id'])) {
         $message = [
                 'success' => false,
                 'message' => 'Username already taken, try a different username',
@@ -205,7 +248,7 @@ $app->post('/auth/login', function ($request, $response) {
         if (sha1($password) == $loginuser[0]['password']) {
             $token = bin2hex(openssl_random_pseudo_bytes(16));
 
-            $tokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
+            $tokenExpiration = date('Y-m-d H:i:s', strtotime('+24 hours'));
             try {
                 $user = User::find((int)$loginuser[0]['id']);
 
@@ -242,7 +285,7 @@ $app->post('/auth/login', function ($request, $response) {
 $app->post('/auth/logout', function ($request, $response) {
 
     try {
-        $authuser = User::findWhere(['token' => $request->getHeader('HTTP_VUNDI')[0]]);
+        $authuser = User::findWhere(['token' => $request->getHeader('HTTP_TOKEN')[0]]);
         $authuserid = (int)$authuser[0]['id'];
 
         $user = User::find($authuserid);

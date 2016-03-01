@@ -43,6 +43,7 @@ class EmojiController
         $emoji->char = $data['char'];
         $emoji->keywords = $data['keywords'];
         $emoji->category = $data['category'];
+        $emoji->created_by = $data['username'];
         $emoji->date_created = date("Y-m-d H:i:s");
         $emoji->date_updated = date("Y-m-d H:i:s");
         $emoji->save();
