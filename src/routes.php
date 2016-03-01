@@ -238,3 +238,31 @@ $app->post('/auth/login', function ($request, $response) {
     $response->write($json);
     return $response;
 });
+
+$app->post('/auth/logout', function ($request, $response) {
+
+    try {
+        $authuser = User::findWhere(['token' => $request->getHeader('HTTP_VUNDI')[0]]);
+        $authuserid = (int)$authuser[0]['id'];
+
+        $user = User::find($authuserid);
+        $user->token = '';
+        $user->token_expire = '';
+        $user->update();
+        $response = $response->withStatus(200);
+
+        $message = [
+            'message' => 'User logged out successfully',
+        ];
+    } catch (\Exception $e) {
+        $message = [
+            'message' => $e->getMessage()
+        ];
+        $response = $response->withStatus(400);
+    }
+
+    $json = json_encode($message);
+    $response->write($json);
+
+    return $response;
+});
