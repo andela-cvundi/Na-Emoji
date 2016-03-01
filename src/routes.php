@@ -134,7 +134,7 @@ $app->put('/emoji/{id}', function ($request, $response, $args) {
     $response->write(json_encode($message));
 
     return $response;
-});
+})->add($authMiddleWare);
 
 
 // Partially update an emoji with ID.
@@ -176,7 +176,7 @@ $app->patch('/emoji/{id}', function ($request, $response, $args) {
 
         return json_encode($message);
     }
-});
+})->add($authMiddleWare);
 
 $app->delete('/emoji/{id}', function ($request, $response, $args) {
 
@@ -196,7 +196,7 @@ $app->delete('/emoji/{id}', function ($request, $response, $args) {
 
     $response = $response->withHeader('Content-type', 'application/json');
     return $response->write(json_encode($message));
-});
+})->add($authMiddleWare);
 
 
 // Register a new user
@@ -308,4 +308,5 @@ $app->post('/auth/logout', function ($request, $response) {
     $response->write($json);
 
     return $response;
-});
+})->add($authMiddleWare);
+;
