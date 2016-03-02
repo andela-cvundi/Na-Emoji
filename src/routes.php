@@ -23,29 +23,46 @@ $authMiddleWare = function ($request, $response, $next) {
         $date = $date->format('Y-m-d H:i:s');
         $user = User::findWhere(['token' => $token]);
 
-        if ($user[0]['token_expire'] > $date) {
-            $loggedin = $user[0];
-        }
+        $loggedin = [];
 
-        if (array_key_exists('username', $loggedin)) {
-            $request = $request->withAttribute('username', $loggedin['username']);
-            $response = $next($request, $response);
+        if (! empty($user)) {
+            if ($user[0]['token_expire'] > $date) {
+                $loggedin = $user[0];
+            }
+
+            if (array_key_exists('username', $loggedin)) {
+                $request = $request->withAttribute('username', $loggedin['username']);
+                $response = $next($request, $response);
+            } else {
+                $response = $response->withHeader('Content-type', 'application/json');
+                $response = $response->withStatus(401);
+                $message = [
+                    'message' => 'Your token has either expired or invalid. Please login to get the correct token'
+                ];
+                $json = json_encode($message);
+                $response->write($json);
+            }
         } else {
             $response = $response->withStatus(401);
             $message = [
-                'message' => 'Your token is either expired or invalid. Please login to get the correct token',
+                'message' => 'Your is invalid. Please login to get the correct token'
             ];
+            $response = $response->withHeader('Content-type', 'application/json');
             $json = json_encode($message);
             $response->write($json);
         }
+
+
     } else {
         $response = $response->withStatus(401);
+        $response = $response->withHeader('Content-type', 'application/json');
         $message = [
             'message' => 'Please provide an authentication token',
         ];
         $json = json_encode($message);
         $response->write($json);
     }
+
     return $response;
 };
 
