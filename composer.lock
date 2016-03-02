@@ -627,16 +627,16 @@
         },
         {
             "name": "vundi/potato-orm",
-            "version": "1.0.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/andela-cvundi/potatoORM.git",
-                "reference": "2bc0cc1ba2c70f97c52cdfd168dda47058d0885d"
+                "reference": "1ff9dd49e8d9c9e386918f2917a4471037c7f13d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/andela-cvundi/potatoORM/zipball/2bc0cc1ba2c70f97c52cdfd168dda47058d0885d",
-                "reference": "2bc0cc1ba2c70f97c52cdfd168dda47058d0885d",
+                "url": "https://api.github.com/repos/andela-cvundi/potatoORM/zipball/1ff9dd49e8d9c9e386918f2917a4471037c7f13d",
+                "reference": "1ff9dd49e8d9c9e386918f2917a4471037c7f13d",
                 "shasum": ""
             },
             "require": {
@@ -673,7 +673,7 @@
                 "orm",
                 "pdo"
             ],
-            "time": "2016-02-29 16:27:21"
+            "time": "2016-03-02 08:51:07"
         }
     ],
     "packages-dev": [
