@@ -7,5 +7,5 @@ use Vundi\Potato\Model;
 class Emoji extends Model
 {
     //table to use in the database
-    protected static $entity_table = 'Emoji';
+    protected static $entity_table = 'emoji';
 }

@@ -7,5 +7,5 @@ use Vundi\Potato\Model;
 class User extends Model
 {
     //table to use in the database
-    protected static $entity_table = 'User';
+    protected static $entity_table = 'user';
 }
