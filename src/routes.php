@@ -221,6 +221,12 @@ $app->post('/auth/register', function ($request, $response) {
     $data = $request->getParsedBody();
     $username = $data['username'];
     $password = $data['password'];
+
+    // $database = new Database();
+    // $query = "SELECT * FROM users WHERE username = '$username'";
+    // $statement = $database::$db_handler->query($query);
+    // $user = $statement->fetchAll();
+
     $user = User::findWhere(['username' => $username]);
     if (isset($user[0]['id'])) {
         $message = [
