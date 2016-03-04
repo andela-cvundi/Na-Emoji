@@ -4,12 +4,10 @@ use Vundi\NaEmoji\Controllers\EmojiController;
 use Vundi\NaEmoji\Models\Emoji;
 use Vundi\NaEmoji\Models\User;
 use Vundi\Potato\Exceptions\NonExistentID;
+use Vundi\Potato\Database;
+use Vundi\NaEmoji\findWhere;
 
 date_default_timezone_set('Africa/Nairobi');
-
-
-
-
 /*
  * Authorization Middleware
  * Authenticates the requests by checking the user's token
@@ -21,13 +19,16 @@ $authMiddleWare = function ($request, $response, $next) {
         $token = $headers['HTTP_TOKEN'][0];
         $date = new DateTime();
         $date = $date->format('Y-m-d H:i:s');
-        $user = User::findWhere(['token' => $token]);
+
+        $query = "SELECT * FROM users WHERE token = '$token'";
+        $find = new findWhere();
+        $user = $find->findResults($query);
 
         $loggedin = [];
 
         if (! empty($user)) {
-            if ($user[0]['token_expire'] > $date) {
-                $loggedin = $user[0];
+            if ($user['token_expire'] > $date) {
+                $loggedin = $user;
             }
 
             if (array_key_exists('username', $loggedin)) {
@@ -222,13 +223,11 @@ $app->post('/auth/register', function ($request, $response) {
     $username = $data['username'];
     $password = $data['password'];
 
-    // $database = new Database();
-    // $query = "SELECT * FROM users WHERE username = '$username'";
-    // $statement = $database::$db_handler->query($query);
-    // $user = $statement->fetchAll();
+    $query = "SELECT * FROM users WHERE username = '$username'";
+    $find = new findWhere();
+    $user = $find->findResults($query);
 
-    $user = User::findWhere(['username' => $username]);
-    if (isset($user[0]['id'])) {
+    if (isset($user['id'])) {
         $message = [
                 'success' => false,
                 'message' => 'Username already taken, try a different username',
@@ -265,15 +264,18 @@ $app->post('/auth/login', function ($request, $response) {
     $username = $data['username'];
     $password = $data['password'];
     $attReturn = [];
-    $loginuser = User::findWhere(['username' => $username]);
 
-    if (array_key_exists('id', $loginuser[0])) {
-        if (sha1($password) == $loginuser[0]['password']) {
+    $query = "SELECT * FROM users WHERE username = '$username'";
+    $find = new findWhere();
+    $loginuser = $find->findResults($query);
+
+
+    if (array_key_exists('id', $loginuser)) {
+        if (sha1($password) == $loginuser['password']) {
             $token = bin2hex(openssl_random_pseudo_bytes(16));
-
             $tokenExpiration = date('Y-m-d H:i:s', strtotime('+24 hours'));
             try {
-                $user = User::find((int)$loginuser[0]['id']);
+                $user = User::find($loginuser['id']);
 
                 $user->token = $token;
                 $user->token_expire = $tokenExpiration;
@@ -308,12 +310,15 @@ $app->post('/auth/login', function ($request, $response) {
 $app->post('/auth/logout', function ($request, $response) {
 
     try {
-        $authuser = User::findWhere(['token' => $request->getHeader('HTTP_TOKEN')[0]]);
-        $authuserid = (int)$authuser[0]['id'];
+        $token = $request->getHeader('HTTP_TOKEN')[0];
+        $query = "SELECT * FROM users WHERE token = '$token'";
+        $find = new findWhere();
+        $authuser = $find->findResults($query);
+        $authuserid = $authuser['id'];
 
         $user = User::find($authuserid);
         $user->token = '';
-        $user->token_expire = '';
+        $user->token_expire = null;
         $user->update();
         $response = $response->withStatus(200);
 
