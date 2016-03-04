@@ -305,7 +305,7 @@ $app->post('/auth/login', function ($request, $response) {
             } else {
                 $response = $response->withStatus(401);
                 $attReturn = [
-                'message' => 'Not authenticated. Please make sure you have registered'
+                'message' => 'Wrong password. Make sure you type in the password correct'
                 ];
             }
         } else {
