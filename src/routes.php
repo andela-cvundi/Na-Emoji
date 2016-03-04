@@ -220,87 +220,109 @@ $app->delete('/emoji/{id}', function ($request, $response, $args) {
 // Register a new user
 $app->post('/auth/register', function ($request, $response) {
     $data = $request->getParsedBody();
-    $username = $data['username'];
-    $password = $data['password'];
 
-    $query = "SELECT * FROM users WHERE username = '$username'";
-    $find = new findWhere();
-    $user = $find->findResults($query);
+    if (isset($data['username']) && isset($data['password'])) {
+        $username = $data['username'];
+        $password = $data['password'];
 
-    if (isset($user['id'])) {
-        $message = [
+        $query = "SELECT * FROM users WHERE username = '$username'";
+        $find = new findWhere();
+        $user = $find->findResults($query);
+
+        if (isset($user['id'])) {
+            $message = [
                 'success' => false,
-                'message' => 'Username already taken, try a different username',
+                'message' => 'Username already taken, try a different username'
             ];
-        $response = $response->withStatus(400);
-    } else {
-        $user = new User();
-        $user->username = $username;
-        $user->password = sha1($password);
+            $response = $response->withStatus(400);
+        } else {
+            $user = new User();
+            $user->username = $username;
+            $user->password = sha1($password);
 
-        try {
-            $user->save();
-            $message = [
+            try {
+                $user->save();
+                $message = [
                 'success' => true,
-                'message' => 'Account successfully created',
-            ];
-            $response = $response->withStatus(201);
-        } catch (\Exception $e) {
-            $message = [
+                'message' => 'Account successfully created'
+                ];
+                $response = $response->withStatus(201);
+            } catch (\Exception $e) {
+                $message = [
                 'success' => false,
                 'message' => $e->getMessage(),
-            ];
-            $response = $response->withStatus(500);
+                ];
+                $response = $response->withStatus(500);
+            }
         }
+    } else {
+        $message = [
+            'success' => false,
+            'message' => 'Pass username and password'
+        ];
+        $response = $response->withStatus(400);
     }
+
     $response = $response->withHeader('Content-type', 'application/json');
     $json = json_encode($message);
     $response->write($json);
+
     return $response;
 });
 
 $app->post('/auth/login', function ($request, $response) {
     $data = $request->getParsedBody();
-    $username = $data['username'];
-    $password = $data['password'];
-    $attReturn = [];
 
-    $query = "SELECT * FROM users WHERE username = '$username'";
-    $find = new findWhere();
-    $loginuser = $find->findResults($query);
+    if (isset($data['username']) && isset($data['password'])) {
+        $username = $data['username'];
+        $password = $data['password'];
+        $attReturn = [];
+
+        $query = "SELECT * FROM users WHERE username = '$username'";
+        $find = new findWhere();
+        $loginuser = $find->findResults($query);
 
 
-    if (array_key_exists('id', $loginuser)) {
-        if (sha1($password) == $loginuser['password']) {
-            $token = bin2hex(openssl_random_pseudo_bytes(16));
-            $tokenExpiration = date('Y-m-d H:i:s', strtotime('+24 hours'));
-            try {
-                $user = User::find($loginuser['id']);
+        if (array_key_exists('id', $loginuser)) {
+            if (sha1($password) == $loginuser['password']) {
+                $token = bin2hex(openssl_random_pseudo_bytes(16));
+                $tokenExpiration = date('Y-m-d H:i:s', strtotime('+24 hours'));
+                try {
+                    $user = User::find($loginuser['id']);
 
-                $user->token = $token;
-                $user->token_expire = $tokenExpiration;
-                $user->update();
+                    $user->token = $token;
+                    $user->token_expire = $tokenExpiration;
+                    $user->update();
 
-                $response = $response->withStatus(200);
+                    $response = $response->withStatus(200);
+                    $attReturn = [
+                        'user'  => $username,
+                        'token' => $token
+                    ];
+                } catch (Exception $e) {
+                    echo $e->getMessage();
+                }
+            } else {
+                $response = $response->withStatus(401);
                 $attReturn = [
-                    'user'  => $username,
-                    'token' => $token,
+                'message' => 'Not authenticated. Please make sure you have registered'
                 ];
-            } catch (Exception $e) {
-                echo $e->getMessage();
             }
         } else {
             $response = $response->withStatus(401);
             $attReturn = [
-                'message' => 'Not authenticated. Please make sure you have registered',
+            'message' => 'Not authenticated. Please make sure you have registered'
             ];
         }
     } else {
-        $response = $response->withStatus(401);
         $attReturn = [
-            'message' => 'Not authenticated. Please make sure you have registered',
+            'success' => false,
+            'message' => 'Pass username and password'
         ];
+        $response = $response->withStatus(400);
     }
+
+
     $response = $response->withHeader('Content-type', 'application/json');
     $json = json_encode($attReturn);
     $response->write($json);
