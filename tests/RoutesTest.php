@@ -14,8 +14,6 @@ class RoutesTest extends PHPUnit_Framework_TestCase
     protected $client;
     protected $url = 'http://naemoji.dev';
     protected $data = [];
-    protected $token;
-
 
     protected function setUp()
     {
@@ -29,12 +27,13 @@ class RoutesTest extends PHPUnit_Framework_TestCase
 
 
         //Login user to get token for other operations during test
-        $response = $this->client->post('auth/login', [
-            'exceptions'  => false,
-            'form_params' => ['username' => 'test-root', 'password' => 'test-root'],
-        ]);
-        $login = json_decode($response->getBody(), true);
-        $this->token = $login['token'];
+        $ruser = [
+            'username' => 'vundi',
+            'password' => 'password'
+        ];
+
+        $response = $this->client->post('/auth/login', ['form_params' => $ruser]);
+        $this->data['token'] = json_decode($response->getBody())->token;
     }
     /**
      * Test landing can be accessed successfully returning
@@ -128,11 +127,20 @@ class RoutesTest extends PHPUnit_Framework_TestCase
      */
     public function testLogout()
     {
-        $response = $this->client->post('/auth/logout');
+        $response = $this->client->get('/auth/logout');
         $this->assertEquals(401, $response->getStatusCode());
     }
 
     /**
      * Test logging out works when token is supplied in the header
      */
+    public function testLogoutWorksWhenTokenIsProvided()
+    {
+        $response = $this->client->get('/auth/logout', [
+            'headers' => [
+                'token' => $this->data['token']
+            ]
+         ]);
+         $this->assertEquals(200, $response->getStatusCode());
+    }
 }
