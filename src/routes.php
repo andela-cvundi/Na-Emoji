@@ -329,7 +329,7 @@ $app->post('/auth/login', function ($request, $response) {
     return $response;
 });
 
-$app->post('/auth/logout', function ($request, $response) {
+$app->get('/auth/logout', function ($request, $response) {
 
     try {
         $token = $request->getHeader('HTTP_TOKEN')[0];
