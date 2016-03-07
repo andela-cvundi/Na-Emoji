@@ -180,6 +180,103 @@ class RoutesTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test error is thrown incase some fields are missing when creating an emoji
+     * Test valid token is required to create an Emoji
+     * @expectedException GuzzleHttp\Exception\ClientException
      */
+    public function testTokenIsRequiredToCreateAnEmoji()
+    {
+        $emoji = [
+            'name' => 'vundi',
+            'char' => ':-)',
+            'category' => 'keywords',
+            'keywords' => 'water', 'alien'
+        ];
+
+        $response = $this->client->post('/emoji', [
+            'form_params' => $emoji
+         ]);
+
+        $this->assertEquals(401, $response->getStatusCode());
+    }
+
+    /**
+     * Test One has to fill in all fields before creating an Emoji
+     * @expectedException GuzzleHttp\Exception\ClientException
+     */
+    public function testOneHasToFIllRequiredFields()
+    {
+        $emoji = [
+            'keywords' => 'water', 'alien'
+        ];
+
+        $response = $this->client->post('/emoji', [
+            'headers' => [
+                'token' => $this->data['token']
+            ],
+            'form_params' => $emoji
+         ]);
+    }
+
+    /**
+     * Test Put works well when all fields are provided and token is supplied
+     */
+    public function testPutWorks()
+    {
+        $emoji = [
+            'name' => 'modified',
+            'char' => ':-)',
+            'category' => 'keywords',
+            'keywords' => 'water', 'alien'
+        ];
+
+        $response = $this->client->put('/emoji/1', [
+            'headers' => [
+                'token' => $this->data['token']
+            ],
+            'form_params' => $emoji
+         ]);
+
+        $this->assertEquals(201, $response->getStatusCode());
+    }
+
+    /**
+     * Test Put must be supplied with all emoji fields for a successful
+     * update to happen
+     * @expectedException GuzzleHttp\Exception\ClientException
+     */
+    public function testALlEmojiFieldsMustBeSuppliedForPut()
+    {
+        $emoji = [
+            'name' => 'modified',
+            'char' => ':-)',
+            'keywords' => 'water', 'alien'
+        ];
+
+        $response = $this->client->put('/emoji/1', [
+            'headers' => [
+                'token' => $this->data['token']
+            ],
+            'form_params' => $emoji
+         ]);
+    }
+
+    /**
+     * Test valid token must be supplied for put to work
+     * @expectedException GuzzleHttp\Exception\ClientException
+     */
+    public function testTokenIsRequiredForPutToWork()
+    {
+        $emoji = [
+            'name' => 'vundi',
+            'char' => ':-)',
+            'category' => 'keywords',
+            'keywords' => 'water', 'alien'
+        ];
+
+        $response = $this->client->put('/emoji/1', [
+            'form_params' => $emoji
+         ]);
+
+        $this->assertEquals(401, $response->getStatusCode());
+    }
 }
