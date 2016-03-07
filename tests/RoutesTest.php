@@ -143,4 +143,29 @@ class RoutesTest extends PHPUnit_Framework_TestCase
          ]);
          $this->assertEquals(200, $response->getStatusCode());
     }
+
+    /**
+     * Test One can see all emojis
+     */
+    public function testOneCanSeeAllEmojis()
+    {
+        $response = $this->client->get('/emojis');
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $emojis = json_decode($response->getBody(), true);
+        $this->assertTrue(is_array($emojis));
+    }
+
+    /**
+     * Test logged in user can create an emoji when token is
+     * valid
+     */
+    public function testLoggedInUserCanCreateAnEmoji()
+    {
+        $response = $this->client->post('/emoji', [
+            'headers' => [
+                'token' => $this->data['token']
+            ]
+         ]);
+    }
 }
