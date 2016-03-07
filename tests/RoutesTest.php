@@ -162,10 +162,24 @@ class RoutesTest extends PHPUnit_Framework_TestCase
      */
     public function testLoggedInUserCanCreateAnEmoji()
     {
+        $emoji = [
+            'name' => 'vundi',
+            'char' => ':-)',
+            'category' => 'keywords',
+            'keywords' => 'water', 'alien'
+        ];
+
         $response = $this->client->post('/emoji', [
             'headers' => [
                 'token' => $this->data['token']
-            ]
+            ],
+            'form_params' => $emoji
          ]);
+
+        $this->assertEquals(201, $response->getStatusCode());
     }
+
+    /**
+     * Test error is thrown incase some fields are missing when creating an emoji
+     */
 }
