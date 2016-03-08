@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c327939512239a5e014ea33f16d3163f",
-    "content-hash": "7d299658bc95c7620acfa4770f40ab55",
+    "hash": "cdfdde7dbe019063f1ac7199e776288a",
+    "content-hash": "1a1936f2124b6e0ab5b5d5651fff9dcb",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -33,6 +33,58 @@
             ],
             "description": "Promoting the interoperability of container objects (DIC, SL, etc.)",
             "time": "2014-12-30 15:22:37"
+        },
+        {
+            "name": "fzaninotto/faker",
+            "version": "v1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fzaninotto/Faker.git",
+                "reference": "d0190b156bcca848d401fb80f31f504f37141c8d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/d0190b156bcca848d401fb80f31f504f37141c8d",
+                "reference": "d0190b156bcca848d401fb80f31f504f37141c8d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0",
+                "squizlabs/php_codesniffer": "~1.5"
+            },
+            "suggest": {
+                "ext-intl": "*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.5.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Faker\\": "src/Faker/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "François Zaninotto"
+                }
+            ],
+            "description": "Faker is a PHP library that generates fake data for you.",
+            "keywords": [
+                "data",
+                "faker",
+                "fixtures"
+            ],
+            "time": "2015-05-29 06:29:14"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -627,16 +679,16 @@
         },
         {
             "name": "vundi/potato-orm",
-            "version": "1.0.1",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/andela-cvundi/potatoORM.git",
-                "reference": "2bc0cc1ba2c70f97c52cdfd168dda47058d0885d"
+                "reference": "cba0eeb1122650204ea1b5d11a85b903a1e94a86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/andela-cvundi/potatoORM/zipball/2bc0cc1ba2c70f97c52cdfd168dda47058d0885d",
-                "reference": "2bc0cc1ba2c70f97c52cdfd168dda47058d0885d",
+                "url": "https://api.github.com/repos/andela-cvundi/potatoORM/zipball/cba0eeb1122650204ea1b5d11a85b903a1e94a86",
+                "reference": "cba0eeb1122650204ea1b5d11a85b903a1e94a86",
                 "shasum": ""
             },
             "require": {
@@ -673,7 +725,7 @@
                 "orm",
                 "pdo"
             ],
-            "time": "2016-02-29 16:27:21"
+            "time": "2016-03-03 12:51:58"
         }
     ],
     "packages-dev": [
