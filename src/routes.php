@@ -77,7 +77,8 @@ $app->get('/', function ($request, $response) {
 $app->get('/emojis', function ($request, $response) {
     $emojis = Emojicontroller::All();
     $response->getHeader("Content-Type", "application/json");
-    echo json_encode($emojis);
+
+    return $response->write(json_encode($emojis));
 });
 
 //Get a specific record
@@ -164,13 +165,8 @@ $app->patch('/emoji/{id}', function ($request, $response, $args) {
             throw new Exception("Nothing to patch here, provide a key value pair to update", 1);
         }
     } catch (Exception $e) {
-        $message = [
-                'success' => false,
-                'message' => $e->getMessage()
-            ];
         $response = $response->withStatus(304);
-        $response = $response->withHeader('Content-type', 'application/json');
-        return $response->write(json_encode($message));
+        return $response;
     }
 
     try {

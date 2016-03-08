@@ -323,4 +323,42 @@ class RoutesTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(304, $response->getStatusCode());
 
     }
+
+    /**
+     * Test delete request cannot work when token is not supplied
+     * @expectedException GuzzleHttp\Exception\ClientException
+     */
+    public function testDeleteMustBeSuppliedWithAToken()
+    {
+        $response = $this->client->delete('/emoji/1');
+        $this->assertEquals(401, $response->getStatusCode());
+    }
+
+    /**
+     * Test delete request works when a valid token is supplied
+     */
+    public function testDeleteMustBeSuppliedWithAValidToken()
+    {
+        $response = $this->client->delete('/emoji/$this->id', [
+            'headers' => [
+                'token' => $this->data['token']
+            ]
+         ]);
+
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    /**
+     * Test cannot delete an ID that is non-existent
+     */
+    public function testErrorIsThrownWhenSomeoneTriesToDeleteANonExistentEmoji()
+    {
+        $response = $this->client->delete('/emoji/4', [
+            'headers' => [
+                'token' => $this->data['token']
+            ]
+         ]);
+
+        $this->assertEquals(200, $response->getStatusCode());
+    }
 }
