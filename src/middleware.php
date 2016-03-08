@@ -3,6 +3,7 @@
 use Vundi\NaEmoji\Models\User;
 use Vundi\NaEmoji\findWhere;
 
+date_default_timezone_set('Africa/Nairobi');
 /*
  * Authorization Middleware
  * Will be used in requests which require middleware
@@ -14,7 +15,7 @@ $authMiddleWare = function ($request, $response, $next) {
     if (isset($headers['HTTP_TOKEN'][0])) {
         $token = $headers['HTTP_TOKEN'][0];
         $date = new DateTime();
-        //
+        //save the date as a timestamp
         $date = $date->format('Y-m-d H:i:s');
 
         $query = "SELECT * FROM users WHERE token = '$token'";
@@ -24,10 +25,18 @@ $authMiddleWare = function ($request, $response, $next) {
         $loggedin = [];
 
         if (! empty($user)) {
+            /**
+             * If a record has been found with that record check to see if
+             * teh token has expired
+             */
             if ($user['token_expire'] > $date) {
                 $loggedin = $user;
             }
 
+            /**
+             * If token is still valid the key username will be present in the
+             * array thet was returned
+             */
             if (array_key_exists('username', $loggedin)) {
                 $request = $request->withAttribute('username', $loggedin['username']);
                 $response = $next($request, $response);
@@ -43,7 +52,7 @@ $authMiddleWare = function ($request, $response, $next) {
         } else {
             $response = $response->withStatus(401);
             $message = [
-                'message' => 'Your is invalid. Please login to get the correct token'
+                'message' => 'Your token is invalid. Please login to get the correct token'
             ];
             $response = $response->withHeader('Content-type', 'application/json');
             $json = json_encode($message);
