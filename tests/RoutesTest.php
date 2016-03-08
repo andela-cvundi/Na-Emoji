@@ -157,6 +157,17 @@ class RoutesTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test get one emoji
+     */
+    public function testGetOneEmoji()
+    {
+        $response = $this->client->get('/emoji/1');
+        $this->assertEquals(200, $response->getStatusCode());
+        $emoji = json_decode($response->getBody(), true);
+        $this->assertTrue(is_array($emoji));
+    }
+
+    /**
      * Test logged in user can create an emoji when token is
      * valid
      */
@@ -278,5 +289,22 @@ class RoutesTest extends PHPUnit_Framework_TestCase
          ]);
 
         $this->assertEquals(401, $response->getStatusCode());
+    }
+
+    /**
+     * Test patch works when valid token is supplied
+     */
+    public function testPatchWorksWhenAValidTokenIsSupplied()
+    {
+        $emoji = [
+            'name' => 'patched'
+        ];
+
+        $response = $this->client->patch('/emoji/1', [
+            'headers' => [
+                'token' => $this->data['token']
+            ],
+            'form_params' => $emoji
+         ]);
     }
 }
