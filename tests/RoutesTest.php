@@ -307,4 +307,20 @@ class RoutesTest extends PHPUnit_Framework_TestCase
             'form_params' => $emoji
          ]);
     }
+
+    /**
+     * Test patch must be supplied with atleast one key value pair to update
+     */
+    public function testPatchNeedsAtleastOneKeyValuePair($value = '')
+    {
+        $response = $this->client->patch('/emoji/1', [
+            'headers' => [
+                'token' => $this->data['token']
+            ],
+            'form_params' => []
+         ]);
+
+        $this->assertEquals(304, $response->getStatusCode());
+
+    }
 }
