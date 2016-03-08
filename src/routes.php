@@ -4,20 +4,21 @@ use Vundi\NaEmoji\Controllers\EmojiController;
 use Vundi\NaEmoji\Models\Emoji;
 use Vundi\NaEmoji\Models\User;
 use Vundi\Potato\Exceptions\NonExistentID;
-use Vundi\Potato\Database;
 use Vundi\NaEmoji\findWhere;
 
 date_default_timezone_set('Africa/Nairobi');
 /*
  * Authorization Middleware
- * Authenticates the requests by checking the user's token
+ * Will be used in requests which require middleware
  */
 $authMiddleWare = function ($request, $response, $next) {
     $headers = $request->getHeaders();
 
+    //see if token has been provided
     if (isset($headers['HTTP_TOKEN'][0])) {
         $token = $headers['HTTP_TOKEN'][0];
         $date = new DateTime();
+        //
         $date = $date->format('Y-m-d H:i:s');
 
         $query = "SELECT * FROM users WHERE token = '$token'";
@@ -89,7 +90,7 @@ $app->get('/emoji/{id}', function ($request, $response, $args) {
     } else {
         $response = $response->withStatus(200);
     }
-
+    //In the response header set the content type to json
     $response = $response->withHeader('Content-type', 'application/json');
     $response->write(json_encode($emoji));
 
@@ -100,15 +101,20 @@ $app->get('/emoji/{id}', function ($request, $response, $args) {
 $app->post('/emoji', function ($request, $response) {
     $data = $request->getParsedBody();
 
+    //Check if all emoji fields have been passed and values assigned
     if (isset($data['name']) && isset($data['char']) && isset($data['category']) && isset($data['keywords'])) {
+        //set the username to the username of the person sending the request
         $data['username'] = $request->getAttribute('username');
         $emoji = EmojiController::newEmoji($data);
+
+        //set status code to 201 meaning successfully created
         $response = $response->withStatus(201);
         $message = [
             'success' => true,
             'message' => 'Emoji successfully created',
         ];
     } else {
+        //status code to 400 bad request
         $response = $response->withStatus(400);
         $message = [
             'success' => 'Not successful',
@@ -125,10 +131,14 @@ $app->post('/emoji', function ($request, $response) {
 // Update an Emoji.
 $app->put('/emoji/{id}', function ($request, $response, $args) {
     $data = $request->getParsedBody();
+    //cast string to number
     $id = (int)$args['id'];
 
+    //check if all fields have been set since put takes in all the fields
     if (isset($data['name']) && isset($data['char']) && isset($data['category']) && isset($data['keywords'])) {
         $emoji = EmojiController::updateEmoji($id, $data);
+
+        //for a successful update
         if ($emoji['success']) {
             $response = $response->withStatus(201);
             $message = [
@@ -136,7 +146,7 @@ $app->put('/emoji/{id}', function ($request, $response, $args) {
                 'message' => 'Emoji successfully updated',
             ];
         } else {
-            $response = $response->withStatus(201);
+            $response = $response->withStatus(400);
             $message = [
                 'message' => $emoji['message']
             ];
@@ -161,6 +171,10 @@ $app->patch('/emoji/{id}', function ($request, $response, $args) {
 
     try {
         $data = $request->getParsedBody();
+        /**
+         * Assert key value pairs have been set in the body of the request
+         * If not throw na exception
+         */
         if (empty($data)) {
             throw new Exception("Nothing to patch here, provide a key value pair to update", 1);
         }
@@ -186,10 +200,8 @@ $app->patch('/emoji/{id}', function ($request, $response, $args) {
         } else {
             $message = [
                 'success' => false,
-                'message' => 'Emoji not partially updated',
+                'message' => 'Emoji not partially updated, Make sure you are passing the correct column names',
             ];
-
-            $response = $response->withStatus(304);
         }
 
         $response = $response->withHeader('Content-type', 'application/json');
@@ -206,10 +218,16 @@ $app->patch('/emoji/{id}', function ($request, $response, $args) {
     }
 })->add($authMiddleWare);
 
+/**
+ * Delete request takes in an id as the parameter
+ */
 $app->delete('/emoji/{id}', function ($request, $response, $args) {
 
     try {
+        //cast the id parameter into an integer
         $id = (int)$args['id'];
+
+        //Call remove method from the Emoji class
         Emoji::remove($id);
         $response = $response->withStatus(200);
         $message = [
@@ -231,6 +249,10 @@ $app->delete('/emoji/{id}', function ($request, $response, $args) {
 $app->post('/auth/register', function ($request, $response) {
     $data = $request->getParsedBody();
 
+    /**
+     * Make sure username and password are passed in the request body
+     * when creating an account
+     */
     if (isset($data['username']) && isset($data['password'])) {
         $username = $data['username'];
         $password = $data['password'];
@@ -239,6 +261,7 @@ $app->post('/auth/register', function ($request, $response) {
         $find = new findWhere();
         $user = $find->findResults($query);
 
+        //check if someone with that username already exists in the database
         if (isset($user['id'])) {
             $message = [
                 'success' => false,
@@ -247,6 +270,10 @@ $app->post('/auth/register', function ($request, $response) {
             $response = $response->withStatus(400);
         } else {
             $user = new User();
+            /**
+             * Set username to the value passed in the body when making the
+             * request and hash the password
+             */
             $user->username = $username;
             $user->password = sha1($password);
 
@@ -257,7 +284,7 @@ $app->post('/auth/register', function ($request, $response) {
                 'message' => 'Account successfully created'
                 ];
                 $response = $response->withStatus(201);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $message = [
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -280,26 +307,46 @@ $app->post('/auth/register', function ($request, $response) {
     return $response;
 });
 
+/**
+ * Make a post call to teh login route
+ */
 $app->post('/auth/login', function ($request, $response) {
     $data = $request->getParsedBody();
 
+    //Username and password must be provided for one to login
     if (isset($data['username']) && isset($data['password'])) {
+        /**
+         * Get the username and password passed in the body during the post
+         * and pass them to variables
+         */
         $username = $data['username'];
         $password = $data['password'];
         $attReturn = [];
 
         $query = "SELECT * FROM users WHERE username = '$username'";
+        /**
+         * Calling a custom method which looks into the database with the supplied query
+         * and returns an array
+         */
         $find = new findWhere();
         $loginuser = $find->findResults($query);
 
-
+        // Check if there are any matches
         if (array_key_exists('id', $loginuser)) {
+            /**
+             * compare passwords see if they match i.e. what is passed in the body vs
+             * what exists in the database
+             */
             if (sha1($password) == $loginuser['password']) {
+                //generate a token
                 $token = bin2hex(openssl_random_pseudo_bytes(16));
+                //set the token expiration to current time stamp then add 24 hours
                 $tokenExpiration = date('Y-m-d H:i:s', strtotime('+24 hours'));
                 try {
+                    /**
+                     * Set token values and token_expiry value to the logged in user
+                     */
                     $user = User::find($loginuser['id']);
-
                     $user->token = $token;
                     $user->token_expire = $tokenExpiration;
                     $user->update();
@@ -332,22 +379,33 @@ $app->post('/auth/login', function ($request, $response) {
         $response = $response->withStatus(400);
     }
 
-
     $response = $response->withHeader('Content-type', 'application/json');
     $json = json_encode($attReturn);
     $response->write($json);
     return $response;
 });
 
+/**
+ * Make a GET request to the logout route
+ */
 $app->get('/auth/logout', function ($request, $response) {
 
     try {
+        //see if token has been passed in the header
         $token = $request->getHeader('HTTP_TOKEN')[0];
+
+        /**
+         * Call the findWhere method and pass in the query to
+         * get the user id of the logged in user
+         */
         $query = "SELECT * FROM users WHERE token = '$token'";
         $find = new findWhere();
         $authuser = $find->findResults($query);
         $authuserid = $authuser['id'];
 
+        /**
+         * Set the token and token_exoiry fields for the logged in user to null
+         */
         $user = User::find($authuserid);
         $user->token = '';
         $user->token_expire = null;
@@ -357,7 +415,7 @@ $app->get('/auth/logout', function ($request, $response) {
         $message = [
             'message' => 'User logged out successfully',
         ];
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         $message = [
             'message' => $e->getMessage()
         ];

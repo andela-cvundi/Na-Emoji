@@ -7,6 +7,9 @@ use PDO;
 
 class FindWhere
 {
+    /**
+     * Return an array after running a query containing a where clause
+     */
     public function findResults($query)
     {
         $db = new Database();
