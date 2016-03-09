@@ -1,5 +1,7 @@
 # Naemoji 💪
 ### Simple API for emojis.
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/andela-cvundi/Na-Emoji/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/andela-cvundi/Na-Emoji/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/andela-cvundi/Na-Emoji/badges/build.png?b=master)](https://scrutinizer-ci.com/g/andela-cvundi/Na-Emoji/build-status/master)
 
 Naemoji is a simple to use API for emojis.
 
