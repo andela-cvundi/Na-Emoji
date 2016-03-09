@@ -12,7 +12,7 @@ use PHPUnit_Framework_TestCase;
 class RoutesTest extends PHPUnit_Framework_TestCase
 {
     protected $client;
-    protected $url = 'http://naemoji.dev';
+    protected $url = 'https://naemoji-staging.herokuapp.com';
     protected $data = [];
 
     protected function setUp()
