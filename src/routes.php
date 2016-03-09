@@ -4,7 +4,7 @@ use Vundi\NaEmoji\Controllers\EmojiController;
 use Vundi\NaEmoji\Models\Emoji;
 use Vundi\NaEmoji\Models\User;
 use Vundi\Potato\Exceptions\NonExistentID;
-use Vundi\NaEmoji\findWhere;
+use Vundi\NaEmoji\FindWhere;
 
 date_default_timezone_set('Africa/Nairobi');
 

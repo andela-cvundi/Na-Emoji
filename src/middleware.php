@@ -1,7 +1,7 @@
 <?php
 
 use Vundi\NaEmoji\Models\User;
-use Vundi\NaEmoji\findWhere;
+use Vundi\NaEmoji\FindWhere;
 
 date_default_timezone_set('Africa/Nairobi');
 /*
