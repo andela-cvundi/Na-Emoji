@@ -1,18 +1,13 @@
-# Required to run your project under the correct environment.
 language: php
 
 php:
- - 5.6
+  - 5.6
 
-# Commands to be run before your environment runs.
 before_script:
-  - composer self-update
-  - composer install --prefer-source --no-interaction --dev
-  - composer require satooshi/php-coveralls
-  - mkdir -p build/logs
+  - travis_retry composer self-update
+  - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-source
 
- # Commands you want to run that will verify your build.
-script: phpunit
-
-after_script:
- - php vendor/bin/coveralls -v
+script:
+  - export CI_BUILD_NUMBER=$TRAVIS_BUILD_NUMBER
+  - vendor/bin/phpcs --standard=psr2 src/
+  - vendor/bin/phpunit
