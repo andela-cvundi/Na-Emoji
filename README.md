@@ -1,11 +1,7 @@
 # Naemoji 💪
 ### Simple API for emojis.
 
-[![Build Status](https://travis-ci.org/andela-cganga/emoji-api.svg?branch=staging)](https://travis-ci.org/andela-cganga/emoji-api)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/andela-cganga/emoji-api/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/andela-cganga/emoji-api/?branch=staging)
-[![StyleCI](https://styleci.io/repos/49257737/shield)](https://styleci.io/repos/49257737)
-
-Naija Emoji is a simple to use API for emojis.
+Naemoji is a simple to use API for emojis.
 
 ##Usage
 First register as a user by sending a POST request to `https://naemoji-staging.herokuapp.com/auth/register` and pass in a username and a password
