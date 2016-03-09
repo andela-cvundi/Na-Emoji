@@ -11,7 +11,7 @@ date_default_timezone_set('Africa/Nairobi');
 //Get landing page
 $app->get('/', function ($request, $response) {
     // Render index view
-    return $response->write('Hello world');
+    return $this->renderer->render($response, 'index.phtml');
 });
 //Get all emojis
 $app->get('/emojis', function ($request, $response) {
