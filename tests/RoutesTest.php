@@ -115,7 +115,7 @@ class RoutesTest extends PHPUnit_Framework_TestCase
      * Test One has to fill in all fields before creating an Emoji
      * @expectedException GuzzleHttp\Exception\ClientException
      */
-    public function testOneHasToFIllRequiredFields()
+    public function testOneHasToFillRequiredFields()
     {
         $emoji = [
             'keywords' => 'water', 'alien'
@@ -156,7 +156,7 @@ class RoutesTest extends PHPUnit_Framework_TestCase
      * update to happen
      * @expectedException GuzzleHttp\Exception\ClientException
      */
-    public function testALlEmojiFieldsMustBeSuppliedForPut()
+    public function testAllEmojiFieldsMustBeSuppliedForPut()
     {
         $emoji = [
             'name' => 'modified',
@@ -207,12 +207,13 @@ class RoutesTest extends PHPUnit_Framework_TestCase
             ],
             'form_params' => $emoji
          ]);
+        $this->assertEquals(201, $response->getStatusCode());
     }
 
     /**
      * Test patch must be supplied with atleast one key value pair to update
      */
-    public function testPatchNeedsAtleastOneKeyValuePair($value = '')
+    public function testPatchNeedsAtleastOneKeyValuePair()
     {
         $response = $this->client->patch('/emoji/1', [
             'headers' => [

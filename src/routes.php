@@ -13,6 +13,7 @@ $app->get('/', function ($request, $response) {
     // Render landing page
     return $this->renderer->render($response, 'index.phtml');
 });
+
 //Get all emojis
 $app->get('/emojis', function ($request, $response) {
     $emojis = Emojicontroller::All();
@@ -94,7 +95,7 @@ $app->put('/emoji/{id}', function ($request, $response, $args) {
         $response = $response->withStatus(400);
         $message = [
             'success' => 'Not successful',
-            'message' => 'Emoji was not updated. Make  sure you pass all the fields',
+            'message' => 'Emoji was not updated. Make  sure you pass in all the fields',
         ];
     }
 
@@ -118,7 +119,10 @@ $app->patch('/emoji/{id}', function ($request, $response, $args) {
             throw new Exception("Nothing to patch here, provide a key value pair to update", 1);
         }
     } catch (Exception $e) {
+        $message = ['message' => $e->getMessage];
+        $response = $response->withHeader('Content-type', 'application/json');
         $response = $response->withStatus(304);
+        $response->write(json_encode($message));
         return $response;
     }
 
@@ -319,8 +323,7 @@ $app->post('/auth/login', function ($request, $response) {
     }
 
     $response = $response->withHeader('Content-type', 'application/json');
-    $json = json_encode($attReturn);
-    $response->write($json);
+    $response->write(json_encode($attReturn));
     return $response;
 });
 

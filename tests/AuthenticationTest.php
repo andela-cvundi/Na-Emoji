@@ -39,7 +39,7 @@ class AuthenticationTest extends PHPUnit_Framework_TestCase
      *
      * @expectedException GuzzleHttp\Exception\ClientException
      */
-    public function testRegisterRouteEmptyParams()
+    public function testRegistrationRouteWithEmptyParams()
     {
         $response = $this->client->post('/auth/register');
     }

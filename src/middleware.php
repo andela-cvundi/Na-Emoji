@@ -46,8 +46,7 @@ $authMiddleWare = function ($request, $response, $next) {
                 $message = [
                     'message' => 'Your token has either expired or invalid. Please login to get the correct token'
                 ];
-                $json = json_encode($message);
-                $response->write($json);
+                $response->write(json_encode($message));
             }
         } else {
             $response = $response->withStatus(401);
@@ -55,8 +54,7 @@ $authMiddleWare = function ($request, $response, $next) {
                 'message' => 'Your token is invalid. Please login to get the correct token'
             ];
             $response = $response->withHeader('Content-type', 'application/json');
-            $json = json_encode($message);
-            $response->write($json);
+            $response->write(json_encode($message));
         }
 
 
@@ -66,8 +64,7 @@ $authMiddleWare = function ($request, $response, $next) {
         $message = [
             'message' => 'Please provide an authentication token',
         ];
-        $json = json_encode($message);
-        $response->write($json);
+        $response->write(json_encode($message));
     }
 
     return $response;
