@@ -10,7 +10,7 @@ class FindWhere
     /**
      * Return an array after running a query containing a where clause
      */
-    public function findResults($query)
+    public static function getResults($query)
     {
         $db = new Database();
         $statement = $db::$db_handler->query($query);
