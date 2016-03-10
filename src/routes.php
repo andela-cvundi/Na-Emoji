@@ -264,7 +264,7 @@ $app->post('/auth/register', function ($request, $response) {
              * request and hash the password
              */
             $user->username = $username;
-            $user->password = sha1($password);
+            $user->password = password_hash($password, PASSWORD_BCRYPT);
 
             try {
                 $user->save();
@@ -325,7 +325,7 @@ $app->post('/auth/login', function ($request, $response) {
              * compare passwords see if they match i.e. what is passed in the body vs
              * what exists in the database
              */
-            if (sha1($password) == $loginuser['password']) {
+            if (password_verify($password, $loginuser['password'])) {
                 //generate a token
                 $token = bin2hex(openssl_random_pseudo_bytes(16));
                 //set the token expiration to current time stamp then add 24 hours
