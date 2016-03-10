@@ -11,7 +11,7 @@ class AuthenticationTest extends PHPUnit_Framework_TestCase
 {
 
     protected $client;
-    protected $url = 'https://naemoji-staging.herokuapp.com';
+    protected $url = 'http://naemoji.dev';
     protected $data = [];
 
     protected function setUp()
@@ -42,6 +42,20 @@ class AuthenticationTest extends PHPUnit_Framework_TestCase
     public function testRegistrationRouteWithEmptyParams()
     {
         $response = $this->client->post('/auth/register');
+    }
+
+    /**
+     * Test that one cannot sign up leaving the password or username fields empty
+     */
+    public function testFieldValuesWhenSigningUpAreNotEmpty()
+    {
+        $user = [
+        'username' => '',
+        'password' => 'password'
+        ];
+
+        $response = $this->client->post('/auth/register', ['form_params' => $user]);
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
 

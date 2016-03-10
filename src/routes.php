@@ -237,12 +237,13 @@ $app->post('/auth/register', function ($request, $response) {
      * when creating an account
      */
     if (isset($data['username'], $data['password'])) {
-        if (count(array_filter($data)) == 4) {
+        if (count(array_filter($data)) == 2) {
             $username = $data['username'];
             $password = $data['password'];
         } else {
-            $message = ['messaage' => 'You cannot leave field values empty'];
-            return json_encode($message);
+            $message = ['messaage' => 'You cannot leave username or password field values empty'];
+            $response = $response->withHeader('Content-type', 'application/json');
+            return $response->write(json_encode($message));
         }
 
 

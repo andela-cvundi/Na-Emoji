@@ -12,7 +12,7 @@ use PHPUnit_Framework_TestCase;
 class RoutesTest extends PHPUnit_Framework_TestCase
 {
     protected $client;
-    protected $url = 'https://naemoji-staging.herokuapp.com';
+    protected $url = 'http://naemoji.dev';
     protected $data = [];
 
     protected function setUp()
@@ -78,7 +78,7 @@ class RoutesTest extends PHPUnit_Framework_TestCase
             'name' => 'vundi',
             'char' => ':-)',
             'category' => 'keywords',
-            'keywords' => 'water', 'alien'
+            'keywords' => "['water', 'alien']"
         ];
 
         $response = $this->client->post('/emoji', [
@@ -130,6 +130,28 @@ class RoutesTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test the field values cannot be empty when creating an emoji
+     * @expectedException GuzzleHttp\Exception\ClientException
+     */
+    public function testFieldValuesCannotBeEmptyWhenCreatingAnEmoji()
+    {
+        $emoji = [
+            'name' => '',
+            'char' => 'jsksk',
+            'category' => 'keywords',
+            'keywords' => ['water', 'alien']
+        ];
+
+        $response = $this->client->post('/emoji', [
+            'headers' => [
+                'token' => $this->data['token']
+            ],
+            'form_params' => $emoji
+         ]);
+    }
+
+
+    /**
      * Test Put works well when all fields are provided and token is supplied
      */
     public function testPutWorks()
@@ -138,7 +160,7 @@ class RoutesTest extends PHPUnit_Framework_TestCase
             'name' => 'modified',
             'char' => ':-)',
             'category' => 'keywords',
-            'keywords' => 'water', 'alien'
+            'keywords' => "['water', 'alien']"
         ];
 
         $response = $this->client->put('/emoji/1', [
@@ -161,7 +183,28 @@ class RoutesTest extends PHPUnit_Framework_TestCase
         $emoji = [
             'name' => 'modified',
             'char' => ':-)',
-            'keywords' => 'water', 'alien'
+            'keywords' => "['water', 'alien']"
+        ];
+
+        $response = $this->client->put('/emoji/1', [
+            'headers' => [
+                'token' => $this->data['token']
+            ],
+            'form_params' => $emoji
+         ]);
+    }
+
+    /**
+     * Test you cannot leave field values empty when making a put request
+     * @expectedException GuzzleHttp\Exception\ClientException
+     */
+    public function testPutRequiresFieldValuesToBePresent()
+    {
+        $emoji = [
+            'name' => '',
+            'char' => '',
+            'keywords' => "['water', 'alien']",
+            'category' => 'put'
         ];
 
         $response = $this->client->put('/emoji/1', [
@@ -222,8 +265,27 @@ class RoutesTest extends PHPUnit_Framework_TestCase
             'form_params' => []
          ]);
 
-        $this->assertEquals(304, $response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
 
+    }
+
+    /**
+     * Test you have to supply the key values when making a patch request
+     */
+    public function testPatchRequiresFieldValuesToBePresent()
+    {
+        $emoji = [
+            'name' => ''
+        ];
+
+        $response = $this->client->patch('/emoji/1', [
+            'headers' => [
+                'token' => $this->data['token']
+            ],
+            'form_params' => $emoji
+         ]);
+
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     /**
