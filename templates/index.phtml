@@ -1,37 +1,111 @@
-<html>
-    <head>
-        <meta charset="utf-8"/>
-        <title>Slim 3</title>
-        <link href='//fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>
-        <style>
-            body {
-                margin: 50px 0 0 0;
-                padding: 0;
-                width: 100%;
-                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-                text-align: center;
-                color: #aaa;
-                font-size: 18px;
-            }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Emoji API</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="site__inner-wrapper">
 
-            h1 {
-                color: #719e40;
-                letter-spacing: -3px;
-                font-family: 'Lato', sans-serif;
-                font-size: 100px;
-                font-weight: 200;
-                margin-bottom: 0;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>Slim</h1>
-        <div>a microframework for PHP</div>
+            <div class="site__safe-area clearfix">
+                <div class="client-logo">
+                    <img src="images/logo.png" alt="logo" class="centre">
+                </div>
 
-        <?php if (isset($name)) : ?>
-            <h2>Hello <?= htmlspecialchars($name); ?>!</h2>
-        <?php else: ?>
-            <p>Try <a href="/SlimFramework">/SlimFramework</a>
-        <?php endif; ?>
-    </body>
+                <div class="strapline centre">
+                    <h1 class="alpha">
+                        <span class="theme--dark">Welcome to</span> <a href="#" target="_blank">#Naemoji</a><span class="theme--dark"></span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+        <div class="site__full-width clearfix">
+            <div class="manifesto manifesto__background">
+                <p class="manifesto__copy centre">
+                    Create <span class="emoji emoji--moon"></span> emojis online.<br>
+                    Update <span class="emoji emoji--cable-car"></span> emojis online. <br>
+                    Delete <span class="emoji emoji--beer"></span> emojis online <br>
+                    This is Nemoji. An API service to manage emojis
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+                <div class="col-lg-12 text-center">
+                        <h2>
+                        Below are some of the calls you can make using my API. Some requests require a token passed in the body. Others don't.<strong>Watchout</strong>
+                    </h2>
+                    <div class="container">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Endpoint</th>
+                                    <th class="text-center">Method</th>
+                                    <th class="text-center">Description</th>
+                                    <th class="text-center">Token required?</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>/</td>
+                                    <td>GET</td>
+                                    <td>Landing page</td>
+                                    <td>Nope</td>
+                                </tr>
+                                <tr>
+                                    <td>/auth/register</td>
+                                    <td>POST</td>
+                                    <td>Sign up for an account</td>
+                                    <td>Nope</td>
+                                </tr>
+                                <tr>
+                                    <td>/auth/login</td>
+                                    <td>POST</td>
+                                    <td>Login so that you get an auth token</td>
+                                    <td>Nope</td>
+                                </tr>
+                                <tr>
+                                    <td>/auth/logout</td>
+                                    <td>GET</td>
+                                    <td>Destroy session</td>
+                                    <td><div class="glyphicon glyphicon-check"></div></td>
+                                </tr>
+                                <tr>
+                                    <td>/emojis</td>
+                                    <td>GET</td>
+                                    <td>List all the created emojis</td>
+                                    <td>Nope</td>
+                                </tr>
+                                <tr>
+                                    <td>/emoji/{id}</td>
+                                    <td>GET</td>
+                                    <td>Gets a single emoji</td>
+                                    <td>Nope</td>
+                                </tr>
+                                <tr>
+                                    <td>/emoji</td>
+                                    <td>POST</td>
+                                    <td>Create a new emoji</td>
+                                    <td><div class="glyphicon glyphicon-check"></div></td>
+                                </tr>
+                                <tr>
+                                    <td>/emoji</td>
+                                    <td>PUT</td>
+                                    <td>Updates an emoji</td>
+                                    <td><div class="glyphicon glyphicon-check"></div></td>
+                                </tr>
+                                <tr>
+                                    <td>/emoji/{id}</td>
+                                    <td>DELETE</td>
+                                    <td>Deletes a single emoji</td>
+                                    <td><div class="glyphicon glyphicon-check"></div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+</body>
 </html>
