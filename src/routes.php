@@ -42,17 +42,29 @@ $app->post('/emoji', function ($request, $response) {
     $data = $request->getParsedBody();
 
     //Check if all emoji fields have been passed and values assigned
-    if (isset($data['name']) && isset($data['char']) && isset($data['category']) && isset($data['keywords'])) {
-        //set the username to the username of the person sending the request
-        $data['username'] = $request->getAttribute('username');
-        $emoji = EmojiController::newEmoji($data);
+    if (isset($data['name'], $data['char'], $data['category'], $data['keywords'])) {
 
-        //set status code to 201 meaning successfully created
-        $response = $response->withStatus(201);
-        $message = [
-            'success' => true,
-            'message' => 'Emoji successfully created',
-        ];
+        //count how many keys have values. hould be four if all keys have values
+        if (count(array_filter($data)) == 4) {
+            //set the username to the username of the person sending the request
+            $data['username'] = $request->getAttribute('username');
+            $emoji = EmojiController::newEmoji($data);
+
+            //set status code to 201 meaning successfully created
+            $response = $response->withStatus(201);
+            $message = [
+                'success' => true,
+                'message' => 'Emoji successfully created',
+            ];
+        } else {
+            //status code to 400 bad request
+            $response = $response->withStatus(400);
+            $message = [
+                'success' => 'Not successful',
+                'message' => 'Emoji was not created. You cannot leave any field blank',
+            ];
+        }
+
     } else {
         //status code to 400 bad request
         $response = $response->withStatus(400);
@@ -75,22 +87,34 @@ $app->put('/emoji/{id}', function ($request, $response, $args) {
     $id = (int)$args['id'];
 
     //check if all fields have been set since put takes in all the fields
-    if (isset($data['name']) && isset($data['char']) && isset($data['category']) && isset($data['keywords'])) {
-        $emoji = EmojiController::updateEmoji($id, $data);
+    if (isset($data['name'], $data['char'], $data['category'], $data['keywords'])) {
+
+        //count how many keys have values. hould be four if all keys have values
+        if (count(array_filter($data)) == 4) {
+            $emoji = EmojiController::updateEmoji($id, $data);
 
         //for a successful update
-        if ($emoji['success']) {
-            $response = $response->withStatus(201);
-            $message = [
-                'success' => true,
-                'message' => 'Emoji successfully updated',
-            ];
+            if ($emoji['success']) {
+                $response = $response->withStatus(201);
+                $message = [
+                    'success' => true,
+                    'message' => 'Emoji successfully updated',
+                ];
+            } else {
+                $response = $response->withStatus(400);
+                $message = [
+                    'message' => $emoji['message']
+                ];
+            }
         } else {
+             //status code to 400 bad request
             $response = $response->withStatus(400);
             $message = [
-                'message' => $emoji['message']
+                'success' => 'Not successful',
+                'message' => 'Emoji was not created. You cannot leave any field blank',
             ];
         }
+
     } else {
         $response = $response->withStatus(400);
         $message = [
@@ -119,18 +143,34 @@ $app->patch('/emoji/{id}', function ($request, $response, $args) {
             throw new Exception("Nothing to patch here, provide a key value pair to update", 1);
         }
     } catch (Exception $e) {
-        $message = ['message' => $e->getMessage];
+        $message = [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+
         $response = $response->withHeader('Content-type', 'application/json');
-        $response = $response->withStatus(304);
         $response->write(json_encode($message));
+
         return $response;
     }
 
     try {
+
         $id = (int)$args['id'];
         $emoji = Emoji::find($id);
         foreach ($request->getParsedBody() as $key => $value) {
-            $emoji->{$key} = $value;
+            if (!empty($value)) {
+                $emoji->{$key} = $value;
+            } else {
+                $message = [
+                    'success' => false,
+                    'message' => 'Value for the field to patch cannot be empty',
+                ];
+                $response = $response->withHeader('Content-type', 'application/json');
+                $response->write(json_encode($message));
+
+                return $response;
+            }
         }
         $patch = $emoji->update();
 
@@ -196,9 +236,15 @@ $app->post('/auth/register', function ($request, $response) {
      * Make sure username and password are passed in the request body
      * when creating an account
      */
-    if (isset($data['username']) && isset($data['password'])) {
-        $username = $data['username'];
-        $password = $data['password'];
+    if (isset($data['username'], $data['password'])) {
+        if (count(array_filter($data)) == 4) {
+            $username = $data['username'];
+            $password = $data['password'];
+        } else {
+            $message = ['messaage' => 'You cannot leave field values empty'];
+            return json_encode($message);
+        }
+
 
         $query = "SELECT * FROM users WHERE username = '$username'";
         $find = new findWhere();
@@ -257,7 +303,7 @@ $app->post('/auth/login', function ($request, $response) {
     $data = $request->getParsedBody();
 
     //Username and password must be provided for one to login
-    if (isset($data['username']) && isset($data['password'])) {
+    if (isset($data['username'], $data['password'])) {
         /**
          * Get the username and password passed in the body during the post
          * and pass them to variables
