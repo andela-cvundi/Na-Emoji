@@ -95,3 +95,10 @@ You can destroy your token access to EmojiApi by simply making a `GET` request t
 
 ## Credits
 [Christopher Vundi](https://github.com/andela-cvundi)
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
+[ico-version]: https://img.shields.io/badge/packagist-v1.0.1-brightgreen.svg
+[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
