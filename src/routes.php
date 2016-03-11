@@ -248,7 +248,7 @@ $app->post('/auth/register', function ($request, $response) {
 
 
         $query = "SELECT * FROM users WHERE username = '$username'";
-        $user = findWhere::getResults($query);
+        $user = FindWhere::getResults($query);
 
         //check if someone with that username already exists in the database
         if (isset($user['id'])) {
@@ -317,7 +317,7 @@ $app->post('/auth/login', function ($request, $response) {
          * Calling a custom method which looks into the database with the supplied query
          * and returns an array
          */
-        $loginuser = findWhere::getResults($query);
+        $loginuser = FindWhere::getResults($query);
 
         // Check if there are any matches
         if (array_key_exists('id', $loginuser)) {
@@ -386,7 +386,7 @@ $app->get('/auth/logout', function ($request, $response) {
          * get the user id of the logged in user
          */
         $query = "SELECT * FROM users WHERE token = '$token'";
-        $authuser = findWhere::getResults($query);
+        $authuser = FindWhere::getResults($query);
         $authuserid = $authuser['id'];
 
         /**
