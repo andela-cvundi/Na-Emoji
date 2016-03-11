@@ -142,12 +142,12 @@ in a token value in the header the same way you would pass when
 performing operations which require authorization.
 
 Credits
--------
+~~~~~~
 
 `Christopher Vundi`_
 
 License
--------
+~~~~~~
 
 The MIT License (MIT). Please see `License File`_ for more information.
 
