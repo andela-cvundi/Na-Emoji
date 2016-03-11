@@ -19,7 +19,7 @@ $authMiddleWare = function ($request, $response, $next) {
         $date = $date->format('Y-m-d H:i:s');
 
         $query = "SELECT * FROM users WHERE token = '$token'";
-        $user = findWhere::getResults($query);
+        $user = FindWhere::getResults($query);
 
         $loggedin = [];
 
