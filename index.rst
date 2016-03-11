@@ -4,8 +4,7 @@ Naemoji 💪
 Simple API for emojis.
 ~~~~~~~~~~~~~~~~~~~~~~
 
-|Scrutinizer Code Quality| |Build Status| `[Software
-License][ico-license]`_
+|Scrutinizer Code Quality| |Build Status|
 
 Naemoji is a simple to use API for emojis.
 
