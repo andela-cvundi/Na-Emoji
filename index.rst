@@ -32,7 +32,7 @@ The response for a successful login is:
         "token": "5e4aed96bb11d49269e7e7908baee2b4"
     }
 
-Otherwise you will get differnt responses based on what it is you are
+Otherwise, you will get different responses based on what you are
 not doing right
 
 Get All Emojis
