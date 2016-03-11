@@ -4,8 +4,7 @@ Naemoji 💪
 Simple API for emojis.
 ~~~~~~~~~~~~~~~~~~~~~~
 
-|Scrutinizer Code Quality| |Build Status| `[Software
-License][ico-license]`_
+|Scrutinizer Code Quality| |Build Status|
 
 Naemoji is a simple to use API for emojis.
 
@@ -154,3 +153,10 @@ The MIT License (MIT). Please see `License File`_ for more information.
 
 .. _Christopher Vundi: https://github.com/andela-cvundi
 .. _License File: LICENSE.md
+
+.. _[Software License][ico-license]: LICENSE.md
+
+.. |Scrutinizer Code Quality| image:: https://scrutinizer-ci.com/g/andela-cvundi/Na-Emoji/badges/quality-score.png?b=master
+   :target: https://scrutinizer-ci.com/g/andela-cvundi/Na-Emoji/?branch=master
+.. |Build Status| image:: https://scrutinizer-ci.com/g/andela-cvundi/Na-Emoji/badges/build.png?b=master
+   :target: https://scrutinizer-ci.com/g/andela-cvundi/Na-Emoji/build-status/master
