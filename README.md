@@ -4,7 +4,7 @@
 [![Build Status](https://scrutinizer-ci.com/g/andela-cvundi/Na-Emoji/badges/build.png?b=master)](https://scrutinizer-ci.com/g/andela-cvundi/Na-Emoji/build-status/master)
 [![Software License][ico-license]](LICENSE.md)
 
-Naemoji is a simple to use API for emojis.
+[Naemoji](http://naemoji.readthedocs.org/) is a simple to use API for emojis.
 
 ##Usage
 First register as a user by sending a POST request to `https://naemoji-staging.herokuapp.com/auth/register` and pass in a username and a password
@@ -19,7 +19,7 @@ The response for a successful login is:
     "token": "5e4aed96bb11d49269e7e7908baee2b4"
 }
 ```
-Otherwise you will get differnt responses based on what it is you are not doing right
+Otherwise you will get different responses based on what you are not doing right
 
 ### Get All Emojis
 To get all emojis send a `GET` request to `https://naemoji-staging.herokuapp.com/emojis`. The response is a json with all the emojis from the API.
